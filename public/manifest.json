@@ -1,6 +1,6 @@
 {
   "short_name": "Camlytix AI",
-  "name": "Camlytix AI (also referred to as Camlytix in some mentions) is a software solution that turns any existing camera into a powerful AI-powered video analytics tool. It does not require specific hardware and processes video streams locally for data privacy.",
+  "name": "Camlytix is an AI-based campus safety application that detects animals through camera analytics and sends real-time alerts to users when an animal is identified in a monitored campus area.",
   "icons": [
     {
       "src": "favicon.ico",

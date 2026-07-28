@@ -216,7 +216,7 @@ export default function Dashboard() {
                     <td className="px-4 py-3 text-center">
                       <button
                         type="button"
-                        onClick={() => navigate(`/animals/${item.animal_id}`)}
+                        onClick={() => navigate(`/animals/${item.id}`)}
                         className="inline-flex items-center justify-center !p-0 w-9 h-9 rounded-full hover:bg-gray-100 text-gray-500"
                         aria-label={`View ${item.animal_name}`}
                       >

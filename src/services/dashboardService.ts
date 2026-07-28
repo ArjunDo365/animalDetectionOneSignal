@@ -32,8 +32,9 @@ export interface DashboardAnimalCountResponse {
 
 // const API_BASE_URL = "https://poc-backend.do365tech.com/api";
 // const API_BASE_URL = "https://animal.do365tech.com/admin/api";
+const myVariable = null;
 const API_BASE_URL = "/admin/api";
-const DASHBOARD_ANIMAL_COUNT_API_URL = `${API_BASE_URL}/DashboardAnimalCount/null/null`;
+const DASHBOARD_ANIMAL_COUNT_API_URL = `${API_BASE_URL}/DashboardAnimalCount/${myVariable}/${myVariable}`;
 
 // function authHeaders(): HeadersInit {
 //   const token = getToken();

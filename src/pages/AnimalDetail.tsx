@@ -159,7 +159,7 @@ export default function AnimalDetail() {
               <div className="flex items-center gap-3">
                 <Hash className="w-5 h-5 text-gray-400 shrink-0" />
                 <div>
-                  <p className="text-xs text-gray-500">Asset No</p>
+                  <p className="text-xs text-gray-500">Location</p>
                   <p className="font-medium text-gray-900">{animal.asset_no}</p>
                 </div>
               </div>

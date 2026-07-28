@@ -13,11 +13,12 @@ export default defineConfig({
       // OneSignal uses a separate worker scoped to "/push/onesignal/" so the two
       // never collide (a scope can only be owned by one SW).
       registerType: "autoUpdate",
-      includeAssets: ["vite.svg", "icons/icon-192.png", "icons/icon-512.png"],
+      includeAssets: ["assets/images/favicon.svg", "assets/logo192.png", "assets/logo512.png"],
       manifest: {
-        name: "Employee Directory PWA",
-        short_name: "Employees",
-        description: "Proof-of-concept PWA with OneSignal push notifications",
+        name: "Camlytix AI",
+        short_name: "Camlytix",
+        description:
+          "Camlytix is an AI-based campus safety application that detects animals through camera analytics and sends real-time alerts to users when an animal is identified in a monitored campus area.",
         start_url: "/",
         scope: "/",
         display: "standalone",
