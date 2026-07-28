@@ -76,7 +76,7 @@ export default function Profile() {
     setIsSubmitting(true);
     try {
       const result = await changePassword({
-        user_id: userId,
+        id: userId,
         old_password: formData.oldPass,
         password: formData.newPass,
       });

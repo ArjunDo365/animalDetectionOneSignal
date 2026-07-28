@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.css";
 import { PawPrint, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -40,7 +42,12 @@ function getDefaultDates() {
   const weekAgo = new Date();
   weekAgo.setDate(today.getDate() - 7);
 
-  const toISODate = (d: Date) => d.toISOString().split("T")[0];
+  const toISODate = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   return {
     start: toISODate(weekAgo),
@@ -52,8 +59,20 @@ export default function Reports() {
   const navigate = useNavigate();
   const defaults = getDefaultDates();
 
-  const [startDate, setStartDate] = useState(defaults.start);
-  const [endDate, setEndDate] = useState(defaults.end);
+  const [dateRange, setDateRange] = useState<Date[]>([
+    new Date(defaults.start),
+    new Date(defaults.end),
+  ]);
+
+  // Derived YYYY-MM-DD strings for the API call, kept in sync with dateRange.
+  const toISODate = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  const startDate = dateRange[0] ? toISODate(dateRange[0]) : "";
+  const endDate = dateRange[1] ? toISODate(dateRange[1]) : "";
   const [counts, setCounts] = useState<AnimalCount[]>([]);
   const [animalList, setAnimalList] = useState<AnimalListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -91,32 +110,27 @@ export default function Reports() {
       <h1 className="text-2xl font-bold mb-4">Reports</h1>
 
       {/* Date range pickers */}
-      <div className="bg-white rounded-2xl shadow-sm p-4 mb-5">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex-1">
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              max={endDate || undefined}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              min={startDate || undefined}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
+      <div className="bg-white rounded-2xl shadow-sm p-4 mt-2 mb-5">
+        <div>
+          <label className="block text-xs font-medium text-gray-500 mb-1">
+            Date Range
+          </label>
+          <Flatpickr
+            options={{
+              mode: "range",
+              dateFormat: "Y-m-d",
+              closeOnSelect: false,
+              altInput: true,
+              altFormat: "j F Y",
+            }}
+            value={dateRange}
+            className="form-input w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            onChange={(selectedDates) => {
+              if (selectedDates.length === 2) {
+                setDateRange(selectedDates);
+              }
+            }}
+          />
         </div>
         <button
           type="button"
@@ -138,6 +152,26 @@ export default function Reports() {
 
       {!isLoading && !error && hasSearched && (
         <>
+          {/* Selected date range indicator */}
+          <p className="text-gray-500 text-sm mb-4">
+            Showing results for{" "}
+            <span className="font-semibold text-gray-700">
+              {new Date(startDate).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>{" "}
+            to{" "}
+            <span className="font-semibold text-gray-700">
+              {new Date(endDate).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+          </p>
+
           {/* Animal count cards — single blue theme throughout */}
           <div className="space-y-4">
             {counts.map((item) => (
@@ -207,7 +241,7 @@ export default function Reports() {
                     <td className="px-4 py-3 text-center">
                       <button
                         type="button"
-                        onClick={() => navigate(`/animals/${item.animal_id}`)}
+                        onClick={() => navigate(`/animals/${item.id}`)}
                         className="inline-flex items-center justify-center !p-0 w-9 h-9 rounded-full hover:bg-gray-100 text-gray-500"
                         aria-label={`View ${item.animal_name}`}
                       >

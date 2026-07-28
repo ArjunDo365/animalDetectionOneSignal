@@ -10,11 +10,15 @@ import { getToken } from "./authService";
 
 export interface AnimalDetail {
   id: string;
+  unique_id: number;
+  status: number;
   animal_id: string;
   camera_id: string;
+  camera_unique_id: number;
   animal_name: string;
   asset_no: string;
   type: string | null;
+  model_name: string | null;
   date: string;
   confidence: number;
   is_harmful: number;
@@ -22,8 +26,9 @@ export interface AnimalDetail {
   created_on: string;
 }
 
-const API_BASE_URL = "https://animal.do365tech.com/admin/api";
-const ANIMAL_BY_ID_API_URL = `${API_BASE_URL}/AnimalFaceAnimalById`;
+// const API_BASE_URL = "https://animal.do365tech.com/admin/api";
+const API_BASE_URL = "/admin/api";
+const ANIMAL_BY_ID_API_URL = `${API_BASE_URL}/AnimalFaceById`;
 
 // function authHeaders(): HeadersInit {
 //   const token = getToken();
@@ -56,5 +61,9 @@ export async function fetchAnimalById(
   }
 
   const data = await response.json();
+  // API returns an array with a single record — unwrap it.
+  if (Array.isArray(data)) {
+    return data.length > 0 ? data[0] : null;
+  }
   return data ?? null;
 }

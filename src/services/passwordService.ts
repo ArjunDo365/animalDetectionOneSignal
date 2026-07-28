@@ -8,7 +8,7 @@
 import { getToken } from "./authService";
 
 export interface ChangePasswordPayload {
-  user_id: string | number;
+  id: string | number;
   old_password: string;
   password: string;
 }
@@ -18,13 +18,15 @@ export interface ChangePasswordResponse {
   Message: string;
 }
 
-const API_BASE_URL = "https://animal.do365tech.com/admin/api";
+// const API_BASE_URL = "https://animal.do365tech.com/admin/api";
+const API_BASE_URL = "/admin/api";
 const CHANGE_PASSWORD_API_URL = `${API_BASE_URL}/ChangePassword`;
 
 function authHeaders(): HeadersInit {
   const token = getToken();
   return {
     "Content-Type": "application/json",
+    Accept: "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
@@ -37,8 +39,15 @@ export async function changePassword(
   payload: ChangePasswordPayload,
 ): Promise<ChangePasswordResponse> {
   const response = await fetch(CHANGE_PASSWORD_API_URL, {
-    method: "POST",
-    headers: authHeaders(),
+    method: "PUT",
+    // headers: {
+    //   ...authHeaders(),
+    //   "X-CSRF-TOKEN": "",
+    // },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
     body: JSON.stringify(payload),
   });
 

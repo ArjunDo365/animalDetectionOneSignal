@@ -11,7 +11,8 @@ const TOKEN_KEY = "pwa_auth_token";
 const USER_KEY = "pwa_auth_user";
 
 // export const API_URL = "https://poc-backend.do365tech.com/api";
-export const API_URL = "https://animal.do365tech.com/admin/api";
+// export const API_URL = "https://animal.do365tech.com/admin/api";
+export const API_URL = "/admin/api";
 // "http://192.168.29.62:8000/api";
 const LOGIN_API_URL = `${API_URL}/UserLogin`;
 // "http://192.168.29.62:8000/api/UserLogin";

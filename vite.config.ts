@@ -56,4 +56,13 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      "/admin/api": {
+        target: "https://animal.do365tech.com",
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
 });

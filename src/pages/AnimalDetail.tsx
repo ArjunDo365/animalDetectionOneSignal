@@ -28,9 +28,11 @@ function resolveImageSrc(image: string): string {
   return `${IMAGE_BASE_URL}/${image}`;
 }
 
-function formatCreatedOn(createdOn: string): string {
+function formatCreatedOn(createdOn: string | undefined | null): string {
   // Backend sends "YYYY-MM-DD HH:mm:ss" — parse manually since browsers
   // (Safari in particular) don't reliably parse space-separated datetimes.
+  if (!createdOn) return "—";
+
   const [datePart, timePart] = createdOn.split(" ");
   if (!datePart || !timePart) return createdOn;
 
@@ -162,7 +164,7 @@ export default function AnimalDetail() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <Camera className="w-5 h-5 text-gray-400 shrink-0" />
                 <div>
                   <p className="text-xs text-gray-500">Camera ID</p>
@@ -170,9 +172,9 @@ export default function AnimalDetail() {
                     {animal.camera_id}
                   </p>
                 </div>
-              </div>
+              </div> */}
 
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <Gauge className="w-5 h-5 text-gray-400 shrink-0" />
                 <div>
                   <p className="text-xs text-gray-500">Confidence</p>
@@ -180,7 +182,7 @@ export default function AnimalDetail() {
                     {(animal.confidence * 100).toFixed(1)}%
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex items-center gap-3">
                 <Calendar className="w-5 h-5 text-gray-400 shrink-0" />
