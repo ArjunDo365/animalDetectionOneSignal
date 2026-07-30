@@ -12,7 +12,9 @@ const USER_KEY = "pwa_auth_user";
 
 // export const API_URL = "https://poc-backend.do365tech.com/api";
 // export const API_URL = "https://animal.do365tech.com/admin/api";
-export const API_URL = "/admin/api";
+// export const API_URL = "/admin/api";
+export const API_URL = import.meta.env.VITE_API_BASE_URL;
+// const API_URL = "http://192.168.29.62:8000/api";
 // "http://192.168.29.62:8000/api";
 const LOGIN_API_URL = `${API_URL}/UserLogin`;
 // "http://192.168.29.62:8000/api/UserLogin";
@@ -124,7 +126,7 @@ export async function logout(): Promise<void> {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           user_id: user.id,

@@ -12,12 +12,14 @@ import {
   Hash,
   Calendar,
   Gauge,
+  Map,
+  MapPin,
 } from "lucide-react";
 import { fetchAnimalById, type AnimalDetail } from "../services/animalService";
 
 // Renders the `image` field either as a base64 payload or as a relative
 // file path served by the backend.
-const IMAGE_BASE_URL = "https://poc-backend.do365tech.com";
+const IMAGE_BASE_URL = "https://animal.do365tech.com";
 
 function resolveImageSrc(image: string): string {
   if (!image) return "";
@@ -47,11 +49,13 @@ function formatCreatedOn(createdOn: string | undefined | null): string {
     month: "short",
     year: "numeric",
   });
-  const formattedTime = date.toLocaleTimeString("en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
+  const formattedTime = date
+    .toLocaleTimeString("en-IN", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .toUpperCase();
 
   return `${formattedDate}, ${formattedTime}`;
 }
@@ -60,7 +64,7 @@ export default function AnimalDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [animal, setAnimal] = useState<AnimalDetail | null>(null);
+  const [records, setRecords] = useState<AnimalDetail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -77,7 +81,12 @@ export default function AnimalDetail() {
       setError("");
       try {
         const data = await fetchAnimalById(id);
-        if (active) setAnimal(data);
+        if (active) {
+          const sorted = [...(data ?? [])].sort((a, b) =>
+            a.created_on < b.created_on ? 1 : -1,
+          );
+          setRecords(sorted);
+        }
       } catch (err) {
         if (active) {
           setError(
@@ -117,84 +126,80 @@ export default function AnimalDetail() {
       {error && !isLoading && (
         <p className="text-red-500 text-center py-8">{error}</p>
       )}
-      {!isLoading && !error && !animal && (
+      {!isLoading && !error && records.length === 0 && (
         <p className="text-gray-500 text-center py-8">Animal not found.</p>
       )}
 
-      {!isLoading && !error && animal && (
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          {/* Image */}
-          {animal.image ? (
-            <img
-              src={resolveImageSrc(animal.image)}
-              alt={animal.animal_name}
-              className="w-full h-64 object-cover"
-            />
-          ) : (
-            <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-gray-400">
-              No image available
-            </div>
-          )}
-
-          <div className="p-5">
-            {/* Name + harmful badge */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold capitalize text-gray-900">
-                {animal.animal_name}
-              </h2>
-              {animal.is_harmful === 1 ? (
-                <span className="inline-flex items-center gap-1 bg-red-50 text-red-600 text-sm font-semibold px-3 py-1 rounded-full">
-                  <AlertTriangle className="w-4 h-4" />
-                  Harmful
-                </span>
+      {!isLoading && !error && records.length > 0 && (
+        <div className="space-y-6">
+          {records.map((record) => (
+            <div
+              key={record.unique_id}
+              className="bg-white rounded-2xl shadow-sm overflow-hidden"
+            >
+              {record.image ? (
+                <img
+                  src={resolveImageSrc(record.image)}
+                  alt={record.animal_name}
+                  className="w-full h-64 object-cover"
+                />
               ) : (
-                <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-sm font-semibold px-3 py-1 rounded-full">
-                  Not Harmful
-                </span>
+                <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-gray-400">
+                  No image available
+                </div>
               )}
-            </div>
 
-            {/* Detail rows */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <Hash className="w-5 h-5 text-gray-400 shrink-0" />
-                <div>
-                  <p className="text-xs text-gray-500">Location</p>
-                  <p className="font-medium text-gray-900">{animal.asset_no}</p>
+              <div className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold capitalize text-gray-900">
+                    {record.animal_name}
+                  </h2>
+                  {record.is_harmful === 1 ? (
+                    <span className="inline-flex items-center gap-1 bg-red-50 text-red-600 text-sm font-semibold px-3 py-1 rounded-full">
+                      <AlertTriangle className="w-4 h-4" />
+                      Harmful
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-sm font-semibold px-3 py-1 rounded-full">
+                      Not Harmful
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-5 h-5 text-gray-400 shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Location</p>
+                      <p className="font-medium text-gray-900">
+                        {record.asset_no}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* <div className="flex items-center gap-3">
+                    <Gauge className="w-5 h-5 text-gray-400 shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Confidence</p>
+                      <p className="font-medium text-gray-900">
+                        {(record.confidence * 100).toFixed(1)}%
+                      </p>
+                    </div>
+                  </div> */}
+
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-5 h-5 text-gray-400 shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Captured At</p>
+                      <p className="font-medium text-gray-900">
+                        {formatCreatedOn(record.created_on)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* <div className="flex items-center gap-3">
-                <Camera className="w-5 h-5 text-gray-400 shrink-0" />
-                <div>
-                  <p className="text-xs text-gray-500">Camera ID</p>
-                  <p className="font-medium text-gray-900">
-                    {animal.camera_id}
-                  </p>
-                </div>
-              </div> */}
-
-              {/* <div className="flex items-center gap-3">
-                <Gauge className="w-5 h-5 text-gray-400 shrink-0" />
-                <div>
-                  <p className="text-xs text-gray-500">Confidence</p>
-                  <p className="font-medium text-gray-900">
-                    {(animal.confidence * 100).toFixed(1)}%
-                  </p>
-                </div>
-              </div> */}
-
-              <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-gray-400 shrink-0" />
-                <div>
-                  <p className="text-xs text-gray-500">Captured At</p>
-                  <p className="font-medium text-gray-900">
-                    {formatCreatedOn(animal.created_on)}
-                  </p>
-                </div>
-              </div>
             </div>
-          </div>
+          ))}
         </div>
       )}
     </div>

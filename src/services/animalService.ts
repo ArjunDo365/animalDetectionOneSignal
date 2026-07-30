@@ -27,7 +27,9 @@ export interface AnimalDetail {
 }
 
 // const API_BASE_URL = "https://animal.do365tech.com/admin/api";
-const API_BASE_URL = "/admin/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// const API_BASE_URL = "/admin/api";
+// const API_BASE_URL = "http://192.168.29.62:8000/api";
 const ANIMAL_BY_ID_API_URL = `${API_BASE_URL}/AnimalFaceById`;
 
 // function authHeaders(): HeadersInit {
@@ -44,7 +46,7 @@ const ANIMAL_BY_ID_API_URL = `${API_BASE_URL}/AnimalFaceById`;
  */
 export async function fetchAnimalById(
   id: string,
-): Promise<AnimalDetail | null> {
+): Promise<AnimalDetail[] | null> {
   const response = await fetch(`${ANIMAL_BY_ID_API_URL}/${id}`, {
     method: "GET",
     // headers: authHeaders(),
@@ -63,7 +65,7 @@ export async function fetchAnimalById(
   const data = await response.json();
   // API returns an array with a single record — unwrap it.
   if (Array.isArray(data)) {
-    return data.length > 0 ? data[0] : null;
+    return data.length > 0 ? data : [];
   }
   return data ?? null;
 }

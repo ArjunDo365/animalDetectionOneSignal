@@ -12,8 +12,8 @@ import type { NotificationClickEvent } from "react-onesignal";
 // import { API_URL } from "./authService";
 
 // Replace with your real OneSignal app id from the OneSignal dashboard.
-const ONESIGNAL_APP_ID = "b5ab97ed-319b-4fd6-a750-adbe2d9fa3a2";
-
+// const ONESIGNAL_APP_ID = "b5ab97ed-319b-4fd6-a750-adbe2d9fa3a2";
+const ONESIGNAL_APP_ID ="e1d16f8f-09f2-497c-903b-6dcf36ddd323";
 // The OneSignal worker lives under /push/onesignal/ so it doesn't clash with
 // the PWA's root-scope service worker (vite-plugin-pwa).
 const ONESIGNAL_SW_SCOPE = "/push/onesignal/";
@@ -48,6 +48,7 @@ export async function initOneSignal(): Promise<void> {
   try {
     await OneSignal.init({
       appId: ONESIGNAL_APP_ID,
+      safari_web_id: "web.onesignal.auto.5462a642-4744-4944-be08-d03aa1430cc8",
       serviceWorkerParam: { scope: ONESIGNAL_SW_SCOPE },
       serviceWorkerPath: ONESIGNAL_SW_PATH,
       // Don't auto-prompt via OneSignal's own slide-down; we control timing.
@@ -178,8 +179,8 @@ function extractDeepLinkPath(event: NotificationClickEvent): string | null {
   return null;
 }
 
-const UPDATE_SUBSCRIPTION_API_URL = "https://poc-backend.do365tech.com/api/UpdateSubscription";
-// `http://192.168.29.62:8000/api/UpdateSubscription`;
+const UPDATE_SUBSCRIPTION_API_URL = "https://animal.do365tech.com/admin/api/UpdateSubscription";
+// const UPDATE_SUBSCRIPTION_API_URL =  `http://192.168.29.62:8000/api/UpdateSubscription`;
 // "http://localhost:8000/api";
 
 /**

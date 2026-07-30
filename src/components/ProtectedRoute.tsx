@@ -15,7 +15,7 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
   if (!isAuthenticated) {
     return (
       <Navigate
-        to="/login"
+        to="/"
         replace
         state={{ from: location.pathname }}
       />

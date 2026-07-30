@@ -30,6 +30,8 @@ import Profile from "./pages/Profile";
 // import EmployeeDetail from "./pages/EmployeeDetail";
 import { setDeepLinkNavigator } from "./services/notificationService";
 import AnimalDetail from "./pages/AnimalDetail";
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Inner component that owns the navigate() function and hands it to the
 // notification service so the click listener can route in-app.
@@ -52,7 +54,9 @@ export default function App() {
       <BrowserRouter>
         <DeepLinkBridge>
           <Routes>
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Routes nested here render inside AppLayout, which shows the
                 persistent bottom nav (Reports / Dashboard / Profile).

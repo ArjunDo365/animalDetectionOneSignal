@@ -60,7 +60,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/admin/api": {
-        target: "https://animal.do365tech.com",
+        target: "https://animal.camlytix.ai",
         changeOrigin: true,
         secure: true,
       },
