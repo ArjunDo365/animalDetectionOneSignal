@@ -13,7 +13,7 @@ import type { NotificationClickEvent } from "react-onesignal";
 
 // Replace with your real OneSignal app id from the OneSignal dashboard.
 // const ONESIGNAL_APP_ID = "b5ab97ed-319b-4fd6-a750-adbe2d9fa3a2";
-const ONESIGNAL_APP_ID ="e1d16f8f-09f2-497c-903b-6dcf36ddd323";
+const ONESIGNAL_APP_ID = "e1d16f8f-09f2-497c-903b-6dcf36ddd323";
 // The OneSignal worker lives under /push/onesignal/ so it doesn't clash with
 // the PWA's root-scope service worker (vite-plugin-pwa).
 const ONESIGNAL_SW_SCOPE = "/push/onesignal/";
@@ -157,6 +157,35 @@ export async function waitForOneSignalSubscriptionId(
   return null;
 }
 
+export async function regenerateOneSignalSubscription(): Promise<{
+  subscriptionId: string | null;
+  permissionDenied: boolean;
+}> {
+  if (!initialized) {
+    await initOneSignal();
+  }
+
+  try {
+    if (
+      typeof Notification !== "undefined" &&
+      Notification.permission === "denied"
+    ) {
+      return { subscriptionId: null, permissionDenied: true };
+    }
+
+    const granted = await OneSignal.Notifications.requestPermission();
+    if (!granted) {
+      return { subscriptionId: null, permissionDenied: true };
+    }
+
+    const subscriptionId = await waitForOneSignalSubscriptionId(10000);
+    return { subscriptionId, permissionDenied: false };
+  } catch (err) {
+    console.warn("[OneSignal] regenerate subscription failed:", err);
+    return { subscriptionId: null, permissionDenied: false };
+  }
+}
+
 /**
  * Pull a deep-link path out of a notification click event. OneSignal may put
  * it in `event.data.url`, the launch URL, or a custom `data` field. We only
@@ -179,7 +208,8 @@ function extractDeepLinkPath(event: NotificationClickEvent): string | null {
   return null;
 }
 
-const UPDATE_SUBSCRIPTION_API_URL = "https://animal.do365tech.com/admin/api/UpdateSubscription";
+const UPDATE_SUBSCRIPTION_API_URL =
+  "https://animal.do365tech.com/admin/api/UpdateSubscription";
 // const UPDATE_SUBSCRIPTION_API_URL =  `http://192.168.29.62:8000/api/UpdateSubscription`;
 // "http://localhost:8000/api";
 

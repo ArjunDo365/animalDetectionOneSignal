@@ -19,7 +19,7 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
 import Login from "./pages/Login";
@@ -48,13 +48,22 @@ function DeepLinkBridge({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// The PWA's start_url is "/", so this route is what every fresh launch of
+// the installed app hits. If the user is already logged in (token still in
+// localStorage), send them straight to the dashboard instead of always
+// showing the login form.
+function RootRoute() {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <DeepLinkBridge>
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<RootRoute />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
